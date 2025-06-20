@@ -1,6 +1,6 @@
-// talk.jsモジュールの使用例
+// node-talkモジュールの使用例
 
-const { speak, isJapanese } = require('./talk');
+const { speak, isJapanese } = require('./index');
 
 // 基本的な使い方
 speak('こんにちは！');
