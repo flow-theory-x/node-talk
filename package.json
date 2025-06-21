@@ -1,13 +1,14 @@
 {
   "name": "node-talk",
-  "version": "1.0.0",
-  "description": "macOS向けの日本語/英語音声合成モジュール。テキストを音声で読み上げます。",
+  "version": "2.0.0",
+  "description": "クロスプラットフォーム対応の日本語/英語音声合成モジュール。Windows、macOS、Linux対応。",
   "main": "index.js",
   "bin": {
     "talk": "./bin/talk"
   },
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "check-deps": "node scripts/check-dependencies.js"
   },
   "keywords": [
     "tts",
@@ -15,10 +16,16 @@
     "speech",
     "voice",
     "japanese",
+    "english",
     "日本語",
     "音声合成",
+    "cross-platform",
     "macos",
-    "say"
+    "windows",
+    "linux",
+    "say",
+    "espeak",
+    "powershell"
   ],
   "author": "",
   "license": "MIT",
@@ -30,6 +37,16 @@
     "node": ">=12.0.0"
   },
   "os": [
-    "darwin"
+    "darwin",
+    "win32",
+    "linux"
+  ],
+  "files": [
+    "index.js",
+    "lib/",
+    "bin/",
+    "talk.js",
+    "README.md",
+    "package.json"
   ]
 }

@@ -1,43 +1,52 @@
 #!/usr/bin/env node
 
-const { speakTokenized } = require('./index');
-const { execSync } = require('child_process');
+const { speakTokenized, getAvailableVoices, getPlatform } = require('./index');
 
-// 利用可能な音声リストを取得
-function getAvailableVoices() {
+// プラットフォーム別の音声リスト表示
+async function displayVoiceList() {
     try {
-        const voicesOutput = execSync("say -v '?'", { encoding: 'utf8' });
-        const voices = voicesOutput.split('\n')
-            .filter(line => line.trim())
-            .map(line => {
-                // 括弧を含む名前にも対応する正規表現
-                const match = line.match(/^(.+?)\s+([a-z]{2}_[A-Z]{2})\s+#\s+(.+)$/);
-                if (match) {
-                    return {
-                        name: match[1].trim(),
-                        lang: match[2],
-                        sample: match[3]
-                    };
-                }
-                return null;
-            })
-            .filter(voice => voice !== null);
+        const voices = await getAvailableVoices();
+        const platformInfo = getPlatform();
         
-        const japaneseVoices = voices.filter(v => v.lang === 'ja_JP');
-        const englishVoices = voices.filter(v => v.lang.startsWith('en_'));
+        console.log(`\n利用可能な音声リスト (${platformInfo.platform})\n`);
+        
+        const japaneseVoices = voices.filter(v => 
+            v.lang === 'ja_JP' || 
+            v.name.includes('日本語') || 
+            v.lang === 'ja'
+        );
+        const englishVoices = voices.filter(v => 
+            v.lang && v.lang.startsWith('en') && 
+            !v.name.includes('日本語')
+        );
+        
+        console.log('日本語音声:');
+        if (japaneseVoices.length > 0) {
+            japaneseVoices.forEach(v => console.log(`  ${v.name}${v.engine ? ` (${v.engine})` : ''}`));
+        } else {
+            console.log('  利用可能な日本語音声がありません');
+        }
+        
+        console.log('\n英語音声:');
+        if (englishVoices.length > 0) {
+            englishVoices.forEach(v => console.log(`  ${v.name}${v.lang ? ` (${v.lang})` : ''}${v.engine ? ` [${v.engine}]` : ''}`));
+        } else {
+            console.log('  利用可能な英語音声がありません');
+        }
         
         return { japaneseVoices, englishVoices };
     } catch (error) {
+        console.error('音声リストの取得に失敗しました:', error.message);
         return { japaneseVoices: [], englishVoices: [] };
     }
 }
 
 // ヘルプメッセージを表示
-function showHelp() {
-    const { japaneseVoices, englishVoices } = getAvailableVoices();
+async function showHelp() {
+    const platformInfo = getPlatform();
     
     console.log(`
-node-talk - macOS向け日本語/英語音声合成ツール
+node-talk - クロスプラットフォーム対応音声合成ツール (${platformInfo.platform})
 
 使用方法:
   talk <テキスト>                    指定したテキストを読み上げます
@@ -49,24 +58,20 @@ node-talk - macOS向け日本語/英語音声合成ツール
 機能:
   - 日本語と英語を自動判別して適切な音声で読み上げ
   - 混在したテキストも単語ごとに適切な音声で読み上げ
+  - Windows、macOS、Linux対応
 
 例:
   talk こんにちは
   talk Hello world
   talk "Hello 世界! This is 日本語 mixed with English."
-  talk -v Alex "Hello world"
-  talk -v "Reed (日本語（日本）)" "こんにちは世界"
+  talk -v Fred "Hello world"
+  talk -v Kyoko "こんにちは世界"
   talk -r 300 "高速で読み上げます"
 
-デフォルト音声:
-  - 日本語: kyoto (女性音声、速度200)
-  - 英語: Samantha (女性音声)
-
-利用可能な日本語音声:
-${japaneseVoices.map(v => `  - ${v.name}`).join('\n')}
-
-利用可能な英語音声 (主要なもの):
-${englishVoices.filter(v => ['Alex', 'Samantha', 'Victoria', 'Fred', 'Karen'].includes(v.name)).map(v => `  - ${v.name} (${v.lang})`).join('\n')}
+注意:
+  - 括弧を含む音声名は引用符で囲んでください
+  - 利用可能な音声は環境によって異なります
+  - 'talk --voices' で音声リストを確認できます
 `);
 }
 
@@ -80,21 +85,18 @@ if (args.length === 0) {
 }
 
 if (args[0] === '-h' || args[0] === '--help') {
-    showHelp();
-    process.exit(0);
+    showHelp().then(() => process.exit(0));
+    return;
 }
 
 if (args[0] === '--voices') {
-    const { japaneseVoices, englishVoices } = getAvailableVoices();
-    console.log('\n利用可能な音声リスト\n');
-    console.log('日本語音声:');
-    japaneseVoices.forEach(v => console.log(`  ${v.name}`));
-    console.log('\n英語音声:');
-    englishVoices.forEach(v => console.log(`  ${v.name} (${v.lang})`));
-    console.log('\n※ 括弧を含む音声名は引用符で囲んでください');
-    console.log('例: talk -v "Reed (日本語（日本）)" "こんにちは"');
-    console.log();
-    process.exit(0);
+    displayVoiceList().then(() => {
+        console.log('\n※ 括弧を含む音声名は引用符で囲んでください');
+        console.log('例: talk -v "音声名" "テキスト"');
+        console.log();
+        process.exit(0);
+    });
+    return;
 }
 
 // オプションを解析

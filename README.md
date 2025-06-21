@@ -1,6 +1,6 @@
 # node-talk
 
-macOS向けの日本語/英語音声合成モジュール。テキストを音声で読み上げます。
+**クロスプラットフォーム対応**の日本語/英語音声合成モジュール。Windows、macOS、Linux対応でテキストを音声で読み上げます。
 
 ## インストール
 
@@ -172,8 +172,43 @@ talk -v "Reed (日本語（日本）)" "こんにちは"
 
 ## 必要環境
 
-- macOS（`say`コマンドを使用）
-- Node.js >= 12.0.0
+- **共通**: Node.js >= 12.0.0
+- **macOS**: 標準の`say`コマンド（プリインストール済み）
+- **Windows**: PowerShell + .NET Framework
+- **Linux**: 以下のいずれかの音声エンジン
+  - `espeak-ng` (推奨)
+  - `espeak`
+  - `festival`
+  - `speech-dispatcher`
+
+### プラットフォーム別セットアップ
+
+#### Windows
+```bash
+# 通常は追加インストール不要（PowerShellが標準搭載）
+# 日本語音声を使用する場合:
+# 設定 > 時刻と言語 > 言語 > 日本語を追加
+```
+
+#### Linux
+```bash
+# Ubuntu/Debian
+sudo apt-get install espeak-ng
+
+# CentOS/RHEL/Fedora
+sudo yum install espeak-ng
+
+# Arch Linux
+sudo pacman -S espeak-ng
+
+# Alpine Linux
+sudo apk add espeak-ng
+```
+
+#### macOS
+```bash
+# 追加インストール不要（sayコマンドが標準搭載）
+```
 
 ## ライセンス
 
