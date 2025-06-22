@@ -4,7 +4,7 @@
   "description": "クロスプラットフォーム対応の日本語/英語音声合成モジュール。Windows、macOS、Linux対応。",
   "main": "index.js",
   "bin": {
-    "talk": "./bin/talk"
+    "ntalk": "./bin/talk"
   },
   "scripts": {
     "test": "node test.js",

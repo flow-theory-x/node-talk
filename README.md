@@ -50,28 +50,28 @@ console.log(isJapanese('Hello')); // false
 
 #### 基本的な使い方
 ```bash
-talk こんにちは
-talk Hello world
-talk "Hello 世界! This is 日本語 mixed with English."
+ntalk こんにちは
+ntalk Hello world
+ntalk "Hello 世界! This is 日本語 mixed with English."
 ```
 
 #### オプション
 ```bash
 # カスタム音声を指定
-talk -v Fred "Hello world"
-talk -v Kyoko "こんにちは世界"
-talk -v "Reed (日本語（日本）)" "こんにちは"  # 括弧付き音声名は引用符で囲む
+ntalk -v Fred "Hello world"
+ntalk -v Kyoko "こんにちは世界"
+ntalk -v "Reed (日本語（日本）)" "こんにちは"  # 括弧付き音声名は引用符で囲む
 
 # 読み上げ速度を指定
-talk -r 300 "速く読み上げます"
-talk -r 100 "ゆっくり読み上げます"
+ntalk -r 300 "速く読み上げます"
+ntalk -r 100 "ゆっくり読み上げます"
 
 # 混在テキストで言語別に音声を適用
-talk -v Fred "Hello world こんにちは世界"  # 英語部分のみFred、日本語はデフォルト
+ntalk -v Fred "Hello world こんにちは世界"  # 英語部分のみFred、日本語はデフォルト
 
 # ヘルプと音声リストを表示
-talk --help
-talk --voices
+ntalk --help
+ntalk --voices
 ```
 
 ## API
@@ -158,7 +158,7 @@ const tokens = tokenizeText('Hello世界！');
 利用可能な音声は環境によって異なります。以下のコマンドで確認できます：
 
 ```bash
-talk --voices
+ntalk --voices
 ```
 
 一般的な音声：
@@ -167,7 +167,7 @@ talk --voices
 
 括弧を含む音声名は引用符で囲んでください：
 ```bash
-talk -v "Reed (日本語（日本）)" "こんにちは"
+ntalk -v "Reed (日本語（日本）)" "こんにちは"
 ```
 
 ## 必要環境
